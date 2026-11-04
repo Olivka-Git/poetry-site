@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чтение стихотворения</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link">← На главную</a>
+        
+        <header style="margin-top: 10px;">
+            <h1 id="poemTitle">Загрузка...</h1>
+            <button class="theme-toggle" id="themeToggle">🌙 Ночь</button>
+        </header>
+
+        <main>
+            <div class="poem-text" id="poemBody"></div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Тема
+        const toggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        });
+
+        // Чтение параметров из URL
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get('type');
+        const poemId = params.get('poemId');
+        const colId = params.get('colId');
+
+        let targetPoem = null;
+
+        if (type === 'single') {
+            targetPoem = poetryData.singlePoems.find(p => p.id === poemId);
+        } else if (type === 'collection') {
+            const collection = poetryData.collections.find(c => c.id === colId);
+            if (collection) {
+                targetPoem = collection.poems.find(p => p.id === poemId);
+            }
+        }
+
+        if (targetPoem) {
+            document.title = targetPoem.title;
+            document.getElementById('poemTitle').textContent = targetPoem.title;
+            document.getElementById('poemBody').textContent = targetPoem.text;
+        } else {
+            document.getElementById('poemTitle').textContent = 'Стихотворение не найдено';
+            document.getElementById('poemBody').textContent = 'Возможно, ссылка устарела или указан неверный адрес.';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поэзия</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Подключаем красивый шрифт с засечками для стихов -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Стихи</h1>
+            <button class="theme-toggle" id="themeToggle">🌙 Ночь</button>
+        </header>
+
+        <main id="content">
+            <!-- Сюда JavaScript автоматически выведет содержимое -->
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Логика темы день/ночь
+        const toggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        });
+
+        // Отрисовка главной страницы
+        const contentDiv = document.getElementById('content');
+
+        let htmlContent = '<h2>Сборники</h2>';
+        poetryData.collections.forEach(col => {
+            htmlContent += `
+                <div style="margin-bottom: 30px;">
+                    <h3>${col.title}</h3>
+                    <p style="color: var(--muted-color); font-size: 0.95rem;">${col.description}</p>
+                    <ul class="poem-list">
+            `;
+            col.poems.forEach(poem => {
+                htmlContent += `<li><a href="poem.html?type=collection&colId=${col.id}&poemId=${poem.id}">${poem.title}</a></li>`;
+            });
+            htmlContent += `</ul></div>`;
+        });
+
+        htmlContent += '<h2 style="margin-top: 40px;">Отдельные стихотворения</h2><ul class="poem-list">';
+        poetryData.singlePoems.forEach(poem => {
+            htmlContent += `<li><a href="poem.html?type=single&poemId=${poem.id}">${poem.title}</a> <span style="font-size: 0.85rem; color: var(--muted-color); float: right;">${poem.date}</span></li>`;
+        });
+        htmlContent += '</ul>';
+
+        contentDiv.innerHTML = htmlContent;
+    </script>
+</body>
+</html>
