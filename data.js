@@ -20,7 +20,7 @@ const poetryData = {
         {
             id: "Ambivolentost-soul",
             title: "Сборник «Амбивалентность души»",
-			bgImage: "C:\Users\Давид\OneDrive\Рабочий стол\Личные проекты\Сайт\картинки\Картинка сборника Амбиволетность.jpg",
+			bgImage: "images\Картинка сборника Амбиволетность.jpg",
             poems: [
                 {
                     id: "dychevnoe-relax",

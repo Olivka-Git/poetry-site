@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сборник</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link">← На главную</a>
+        
+        <header>
+            <div class="author-block">
+                <h1 id="colTitle" class="author-name" style="font-size: 1.8rem;">Загрузка...</h1>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌙 Ночь</button>
+        </header>
+
+        <main>
+            <p id="colDesc" style="color: var(--muted-color); font-style: italic; margin-bottom: 30px;"></p>
+            <h2>Список стихотворений</h2>
+            <ul class="poem-list" id="colPoemsList">
+                <!-- Сюда JS выведет стихи сборника -->
+            </ul>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Темы
+        const toggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        });
+
+        // Читаем ID сборника из URL
+        const params = new URLSearchParams(window.location.search);
+        const colId = params.get('colId');
+
+        const collection = poetryData.collections.find(c => c.id === colId);
+
+        if (collection) {
+            document.title = collection.title;
+            document.getElementById('colTitle').textContent = collection.title;
+            document.getElementById('colDesc').textContent = collection.description;
+
+            // Если у сборника есть картинка, ставим её на фон или шапку
+            if (collection.image) {
+                document.body.style.backgroundImage = `linear-gradient(rgba(15, 12, 27, 0.8), rgba(15, 12, 27, 0.9)), url('${collection.image}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+
+            const listEl = document.getElementById('colPoemsList');
+            collection.poems.forEach(poem => {
+                listEl.innerHTML += `
+                    <li>
+                        <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
+                            ${poem.title}
+                        </a>
+                    </li>
+                `;
+            });
+        } else {
+            document.getElementById('colTitle').textContent = 'Сборник не найден';
+        }
+    </script>
+</body>
+</html>
