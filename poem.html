@@ -19,6 +19,10 @@
 
         <main>
             <div class="poem-text" id="poemBody"></div>
+			
+			<div class="poem-explanation" id="poemExplanation" style="display: none;">
+        <strong>О стихотворении:</strong> <span id="poemExplanationText"></span>
+    </div>
         </main>
     </div>
 
@@ -59,6 +63,17 @@
             document.title = targetPoem.title;
             document.getElementById('poemTitle').textContent = targetPoem.title;
             document.getElementById('poemBody').textContent = targetPoem.text;
+            
+            // Новая логика для вывода описания
+            const explanationBlock = document.getElementById('poemExplanation');
+            const explanationText = document.getElementById('poemExplanationText');
+            
+            if (targetPoem.explanation) {
+                explanationText.textContent = targetPoem.explanation;
+                explanationBlock.style.display = 'block'; // Показываем блок
+            } else {
+                explanationBlock.style.display = 'none'; // Скрываем, если описания нет
+            }
         } else {
             document.getElementById('poemTitle').textContent = 'Стихотворение не найдено';
             document.getElementById('poemBody').textContent = 'Возможно, ссылка устарела или указан неверный адрес.';
