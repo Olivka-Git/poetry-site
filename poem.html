@@ -10,7 +10,8 @@
 <body>
 
     <div class="container">
-        <a href="index.html" class="back-link">← На главную</a>
+        <!-- Кнопка Назад динамически ведет в сборник или на главную -->
+        <a href="index.html" class="back-link" id="backLink">← Назад</a>
         
         <header style="margin-top: 10px;">
             <h1 id="poemTitle">Загрузка...</h1>
@@ -41,16 +42,23 @@
             let targetPoem = null;
             let parentCollection = null;
 
+            const backLink = document.getElementById('backLink');
+
             if (type === 'single') {
                 targetPoem = poetryData.singlePoems.find(p => p.id === poemId);
+                backLink.href = 'index.html'; // Отдельные стихи ведут на главную
             } else if (type === 'collection') {
                 parentCollection = poetryData.collections.find(c => c.id === colId);
                 if (parentCollection) {
                     targetPoem = parentCollection.poems.find(p => p.id === poemId);
+                    // Стих из сборника ведет обратно в этот же сборник!
+                    backLink.href = `collection.html?colId=${parentCollection.id}`;
+                } else {
+                    backLink.href = 'index.html';
                 }
             }
 
-            // Функция установки фона стихотворения (на всю ширину с прокруткой колесиком)
+            // Функция установки фона стиха (cover + scroll)
             function updatePoemBackground(theme) {
                 if (parentCollection && parentCollection.image) {
                     if (theme === 'dark') {
@@ -62,9 +70,9 @@
                         document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
                         document.documentElement.style.setProperty('--border-color', '#2e2440');
                     }
-                    document.body.style.backgroundSize = '100% auto';
+                    document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundRepeat = 'no-repeat';
-                    document.body.style.backgroundPosition = 'top center';
+                    document.body.style.backgroundPosition = 'center top';
                     document.body.style.backgroundAttachment = 'scroll';
                 }
             }
