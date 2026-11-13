@@ -50,7 +50,7 @@
                 }
             }
 
-            // Функция установки фона стихотворения
+            // Функция установки фона стихотворения (на всю ширину с прокруткой колесиком)
             function updatePoemBackground(theme) {
                 if (parentCollection && parentCollection.image) {
                     if (theme === 'dark') {
@@ -62,11 +62,10 @@
                         document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
                         document.documentElement.style.setProperty('--border-color', '#2e2440');
                     }
-                    // Картинка видна целиком без обрезки
-                    document.body.style.backgroundSize = 'contain';
+                    document.body.style.backgroundSize = '100% auto';
                     document.body.style.backgroundRepeat = 'no-repeat';
-                    document.body.style.backgroundPosition = 'center top';
-                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.style.backgroundPosition = 'top center';
+                    document.body.style.backgroundAttachment = 'scroll';
                 }
             }
 
@@ -105,7 +104,7 @@
                 document.getElementById('poemTitle').textContent = 'Стихотворение не найдено';
                 document.getElementById('poemBody').innerHTML = `
                     Не удалось найти стихотворение в базе данных.<br>
-                    <small style="color: var(--muted-color);">Параметры ссылки — тип: ${type}, id стиха: ${poemId}, id сборника: ${colId}</small>
+                    <small style="color: var(--muted-color);">Тип: ${type}, id стиха: ${poemId}, id сборника: ${colId}</small>
                 `;
             }
 

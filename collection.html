@@ -38,7 +38,7 @@
             const colId = params.get('colId');
             const collection = poetryData.collections.find(c => c.id === colId);
 
-            // Функция установки фона сборника
+            // Функция установки фона сборника (на всю ширину с прокруткой колесиком)
             function updatePageBackground(theme) {
                 if (collection && collection.image) {
                     if (theme === 'dark') {
@@ -50,11 +50,10 @@
                         document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
                         document.documentElement.style.setProperty('--border-color', '#2e2440');
                     }
-                    // Картинка видна целиком без обрезки
-                    document.body.style.backgroundSize = 'contain';
+                    document.body.style.backgroundSize = '100% auto';
                     document.body.style.backgroundRepeat = 'no-repeat';
-                    document.body.style.backgroundPosition = 'center top';
-                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.style.backgroundPosition = 'top center';
+                    document.body.style.backgroundAttachment = 'scroll';
                 }
             }
 
@@ -82,7 +81,7 @@
                 });
             } else {
                 document.getElementById('colTitle').textContent = 'Сборник не найден';
-                document.getElementById('colDesc').innerHTML = `<span style="color: #ff6b6b;">Сборник с id "<b>${colId}</b>" не найден в data.js. Проверь правильность ссылки или ID.</span>`;
+                document.getElementById('colDesc').innerHTML = `<span style="color: #ff6b6b;">Сборник с id "<b>${colId}</b>" не найден в data.js.</span>`;
             }
 
             toggleBtn.addEventListener('click', () => {
