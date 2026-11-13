@@ -86,3 +86,25 @@
         });
 
         if (targetPoem) {
+            document.title = targetPoem.title;
+            document.getElementById('poemTitle').textContent = targetPoem.title;
+            document.getElementById('poemBody').textContent = targetPoem.text;
+            
+            const explanationBlock = document.getElementById('poemExplanation');
+            const explanationText = document.getElementById('poemExplanationText');
+            
+            if (targetPoem.explanation) {
+                explanationText.textContent = targetPoem.explanation;
+                explanationBlock.style.display = 'block';
+            } else {
+                explanationBlock.style.display = 'none';
+            }
+        } else {
+            // Если стих не нашелся, покажем понятную ошибку и подсказку
+            document.getElementById('poemTitle').textContent = 'Стихотворение не найдено';
+            document.getElementById('poemBody').innerHTML = `
+                Не удалось найти стихотворение.<br>
+                Проверь, совпадают ли `id` в файле <code>data.js</code> с ссылкой в списке.<br>
+                <small style="color: var(--muted-color);">Тип: ${type}, ID стиха: ${poemId}, ID сборника: ${colId}</small>
+            `;
+        }
