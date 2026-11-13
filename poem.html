@@ -26,11 +26,9 @@
         </main>
     </div>
 
-    <!-- Подключаем данные -->
     <script src="data.js"></script>
     <script>
         try {
-            // Проверяем, загрузился ли data.js
             if (typeof poetryData === 'undefined') {
                 throw new Error("Файл data.js не найден или не загрузился!");
             }
@@ -52,7 +50,7 @@
                 }
             }
 
-            // Функция установки фона
+            // Функция установки фона стихотворения
             function updatePoemBackground(theme) {
                 if (parentCollection && parentCollection.image) {
                     if (theme === 'dark') {
@@ -64,7 +62,7 @@
                         document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
                         document.documentElement.style.setProperty('--border-color', '#2e2440');
                     }
-                    // Картинка целиком без обрезки
+                    // Картинка видна целиком без обрезки
                     document.body.style.backgroundSize = 'contain';
                     document.body.style.backgroundRepeat = 'no-repeat';
                     document.body.style.backgroundPosition = 'center top';
@@ -72,11 +70,11 @@
                 }
             }
 
-            // Тема
             const toggleBtn = document.getElementById('themeToggle');
             const currentTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', currentTheme);
             toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+            
             updatePoemBackground(currentTheme);
 
             toggleBtn.addEventListener('click', () => {
@@ -85,10 +83,10 @@
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
                 toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+                updatePoemBackground(newTheme);
                 location.reload();
             });
 
-            // Вывод стихотворения
             if (targetPoem) {
                 document.title = targetPoem.title;
                 document.getElementById('poemTitle').textContent = targetPoem.title;
@@ -112,7 +110,6 @@
             }
 
         } catch (error) {
-            // Если произошла ошибка в коде, выведем её на экран
             document.getElementById('poemTitle').textContent = 'Ошибка загрузки';
             document.getElementById('poemBody').innerHTML = `<span style="color: #ff6b6b;">Произошла ошибка скрипта: ${error.message}</span>`;
             console.error(error);

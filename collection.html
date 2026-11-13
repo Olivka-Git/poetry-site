@@ -29,26 +29,48 @@
 
     <script src="data.js"></script>
     <script>
-const params = new URLSearchParams(window.location.search);
-        const colId = params.get('colId');
-        
-        // Ищем сборник в базе
-        const collection = poetryData.collections.find(c => c.id === colId);
-
-        if (collection) {
-            document.title = collection.title;
-            document.getElementById('colTitle').textContent = collection.title;
-            
-            // Если есть описание — выводим
-            const descEl = document.getElementById('colDesc');
-            if (descEl) {
-                descEl.textContent = collection.description || '';
+        try {
+            if (typeof poetryData === 'undefined') {
+                throw new Error("Файл data.js не загружен!");
             }
 
-            updatePageBackground(currentTheme);
+            const params = new URLSearchParams(window.location.search);
+            const colId = params.get('colId');
+            const collection = poetryData.collections.find(c => c.id === colId);
 
-            const listEl = document.getElementById('colPoemsList');
-            if (listEl) {
+            // Функция установки фона сборника
+            function updatePageBackground(theme) {
+                if (collection && collection.image) {
+                    if (theme === 'dark') {
+                        document.body.style.backgroundImage = `linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92)), url('${collection.image}')`;
+                    } else {
+                        document.body.style.backgroundImage = `linear-gradient(rgba(20, 15, 30, 0.88), rgba(20, 15, 30, 0.94)), url('${collection.image}')`;
+                        document.documentElement.style.setProperty('--text-color', '#e4e1ed');
+                        document.documentElement.style.setProperty('--muted-color', '#9c95b0');
+                        document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
+                        document.documentElement.style.setProperty('--border-color', '#2e2440');
+                    }
+                    // Картинка видна целиком без обрезки
+                    document.body.style.backgroundSize = 'contain';
+                    document.body.style.backgroundRepeat = 'no-repeat';
+                    document.body.style.backgroundPosition = 'center top';
+                    document.body.style.backgroundAttachment = 'fixed';
+                }
+            }
+
+            const toggleBtn = document.getElementById('themeToggle');
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+
+            if (collection) {
+                document.title = collection.title;
+                document.getElementById('colTitle').textContent = collection.title;
+                document.getElementById('colDesc').textContent = collection.description || '';
+
+                updatePageBackground(currentTheme);
+
+                const listEl = document.getElementById('colPoemsList');
                 collection.poems.forEach(poem => {
                     listEl.innerHTML += `
                         <li>
@@ -58,86 +80,25 @@ const params = new URLSearchParams(window.location.search);
                         </li>
                     `;
                 });
+            } else {
+                document.getElementById('colTitle').textContent = 'Сборник не найден';
+                document.getElementById('colDesc').innerHTML = `<span style="color: #ff6b6b;">Сборник с id "<b>${colId}</b>" не найден в data.js. Проверь правильность ссылки или ID.</span>`;
             }
-        } else {
-            // Если сборник не нашелся, выводим понятную ошибку на экран
-            document.getElementById('colTitle').textContent = 'Сборник не найден';
-            const descEl = document.getElementById('colDesc');
-            if (descEl) {
-                descEl.innerHTML = `<span style="color: #ff6b6b;">В базе данных нет сборника с ID: <b>${colId}</b>.<br>Проверь файл data.js и ссылку с главной страницы.</span>`;
-            }
-        }
 
-        // Функция для установки фона страницы с учетом светлой/темной темы
-        function updatePageBackground(theme) {
-            if (collection && collection.image) {
-                if (theme === 'dark') {
-                    document.body.style.backgroundImage = `linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92)), url('${collection.image}')`;
-                } else {
-                    document.body.style.backgroundImage = `linear-gradient(rgba(20, 15, 30, 0.88), rgba(20, 15, 30, 0.94)), url('${collection.image}')`;
-                    document.documentElement.style.setProperty('--text-color', '#e4e1ed');
-                    document.documentElement.style.setProperty('--muted-color', '#9c95b0');
-                    document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
-                    document.documentElement.style.setProperty('--border-color', '#2e2440');
-                }
-                // Вот здесь меняем cover на contain, чтобы картинка была видна целиком
-                document.body.style.backgroundSize = 'contain';
-                document.body.style.backgroundRepeat = 'no-repeat';
-                document.body.style.backgroundPosition = 'center top';
-                document.body.style.backgroundAttachment = 'fixed';
-            }
-        }
-
-        // Темы
-        const toggleBtn = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-        updatePageBackground(currentTheme);
-
-        toggleBtn.addEventListener('click', () => {
-            let theme = document.documentElement.getAttribute('data-theme');
-            let newTheme = theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-            location.reload();
-        });
-
-        // Темы
-        const toggleBtn = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-        updatePageBackground(currentTheme);
-
-        toggleBtn.addEventListener('click', () => {
-            let theme = document.documentElement.getAttribute('data-theme');
-            let newTheme = theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-            updatePageBackground(newTheme);
-        });
-
-        // Вывод данных сборника
-        if (collection) {
-            document.title = collection.title;
-            document.getElementById('colTitle').textContent = collection.title;
-            document.getElementById('colDesc').textContent = collection.description || '';
-
-            const listEl = document.getElementById('colPoemsList');
-            collection.poems.forEach(poem => {
-                listEl.innerHTML += `
-                    <li>
-                        <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
-                            ${poem.title}
-                        </a>
-                    </li>
-                `;
+            toggleBtn.addEventListener('click', () => {
+                let theme = document.documentElement.getAttribute('data-theme');
+                let newTheme = theme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+                updatePageBackground(newTheme);
+                location.reload();
             });
-        } else {
-            document.getElementById('colTitle').textContent = 'Сборник не найден';
+
+        } catch (error) {
+            document.getElementById('colTitle').textContent = 'Ошибка загрузки';
+            document.getElementById('colDesc').innerHTML = `<span style="color: #ff6b6b;">Ошибка: ${error.message}</span>`;
+            console.error(error);
         }
     </script>
 </body>
