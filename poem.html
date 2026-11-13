@@ -19,29 +19,15 @@
 
         <main>
             <div class="poem-text" id="poemBody"></div>
-			
-			<div class="poem-explanation" id="poemExplanation" style="display: none;">
-        <strong>О стихотворении:</strong> <span id="poemExplanationText"></span>
-    </div>
+            
+            <div class="poem-explanation" id="poemExplanation" style="display: none;">
+                <strong>О стихотворении:</strong> <span id="poemExplanationText"></span>
+            </div>
         </main>
     </div>
 
     <script src="data.js"></script>
     <script>
-        // Тема
-        const toggleBtn = document.getElementById('themeToggle');
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-
-        toggleBtn.addEventListener('click', () => {
-            let theme = document.documentElement.getAttribute('data-theme');
-            let newTheme = theme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
-        });
-
         // Чтение параметров из URL
         const params = new URLSearchParams(window.location.search);
         const type = params.get('type');
@@ -49,35 +35,54 @@
         const colId = params.get('colId');
 
         let targetPoem = null;
+        let parentCollection = null;
 
         if (type === 'single') {
             targetPoem = poetryData.singlePoems.find(p => p.id === poemId);
         } else if (type === 'collection') {
-            const collection = poetryData.collections.find(c => c.id === colId);
-            if (collection) {
-                targetPoem = collection.poems.find(p => p.id === poemId);
+            parentCollection = poetryData.collections.find(c => c.id === colId);
+            if (parentCollection) {
+                targetPoem = parentCollection.poems.find(p => p.id === poemId);
             }
         }
 
-        if (targetPoem) {
-            document.title = targetPoem.title;
-            document.getElementById('poemTitle').textContent = targetPoem.title;
-            document.getElementById('poemBody').textContent = targetPoem.text;
-            
-            // Новая логика для вывода описания
-            const explanationBlock = document.getElementById('poemExplanation');
-            const explanationText = document.getElementById('poemExplanationText');
-            
-            if (targetPoem.explanation) {
-                explanationText.textContent = targetPoem.explanation;
-                explanationBlock.style.display = 'block'; // Показываем блок
-            } else {
-                explanationBlock.style.display = 'none'; // Скрываем, если описания нет
+        // Функция установки фона с учетом темы (для светлой темы делаем глубокое затемнение, чтобы темная обложка не выглядела грязно)
+        function updatePoemBackground(theme) {
+            if (parentCollection && parentCollection.image) {
+                if (theme === 'dark') {
+                    // Темная тема: красивое мягкое затемнение
+                    document.body.style.backgroundImage = `linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92)), url('${parentCollection.image}')`;
+                } else {
+                    // Светлая тема: делаем подложку почти темной, чтобы темная обложка смотрелась стильно и читаемо
+                    document.body.style.backgroundImage = `linear-gradient(rgba(20, 15, 30, 0.90), rgba(20, 15, 30, 0.95)), url('${parentCollection.image}')`;
+                    // Автоматически переключаем цвет текста на светлый, раз фон стал темным
+                    document.documentElement.style.setProperty('--text-color', '#e4e1ed');
+                    document.documentElement.style.setProperty('--muted-color', '#9c95b0');
+                    document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
+                    document.documentElement.style.setProperty('--border-color', '#2e2440');
+                }
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
             }
-        } else {
-            document.getElementById('poemTitle').textContent = 'Стихотворение не найдено';
-            document.getElementById('poemBody').textContent = 'Возможно, ссылка устарела или указан неверный адрес.';
         }
-    </script>
-</body>
-</html>
+
+        // Тема
+        const toggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        updatePoemBackground(currentTheme);
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+            
+            // Перезагружаем страницу при смене темы для стихов, чтобы цвета корректно перестроились под темный фон обложки
+            location.reload();
+        });
+
+        if (targetPoem) {
