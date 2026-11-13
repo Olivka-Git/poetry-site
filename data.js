@@ -20,6 +20,7 @@ const poetryData = {
         {
             id: "Ambivolentost-soul",
             title: "Сборник «Амбивалентность души»",
+			description: "ИЗВИНИТЬСЯ НЕ ХОЧЕШЬ?!",
 			image: "images/Ambivoletnost.jpg",
             poems: [
                 {

@@ -13,7 +13,7 @@
     <div class="container">
         <header>
             <div class="author-block">
-                <img src="images\avatar.jpg" alt="Аватар автора" class="author-avatar">
+                <img src="images/avatar.jpg" alt="Аватар автора" class="author-avatar">
                 <div class="author-info">
                     <!-- Здесь можно написать имя или псевдоним друга -->
                     <h1 class="author-name">TessMonde</h1>
@@ -64,12 +64,14 @@
 
         // Отдельные стихи
         htmlContent += '<h2 style="margin-top: 40px; margin-bottom: 20px;">Отдельные стихотворения</h2><ul class="poem-list">';
-        poetryData.singlePoems.forEach(poem => {
+        poetryData.collections.forEach(col => {
             htmlContent += `
-                <li>
-                    <a href="poem.html?type=single&poemId=${poem.id}">${poem.title}</a> 
-                    <span style="font-size: 0.85rem; color: var(--muted-color); float: right;">${poem.date}</span>
-                </li>
+                <a href="collection.html?colId=${col.id}" class="collection-card" style="background-image: linear-gradient(to top, rgba(15,12,27,0.9), rgba(15,12,27,0.3)), url('${col.image}');">
+                    <div class="card-content">
+                        <h3>${col.title}</h3>
+                        <p>${col.description}</p>
+                    </div>
+                </a>
             `;
         });
         htmlContent += '</ul>';
