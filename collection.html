@@ -19,10 +19,6 @@
             <button class="theme-toggle" id="themeToggle">🌙 Ночь</button>
         </header>
 		
-		<div id="colCoverWrapper" style="display: none; margin-bottom: 25px;">
-			<img id="colCoverImg" src="" alt="Обложка сборника" style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-		</div>
-		
         <main>
             <p id="colDesc" style="color: var(--muted-color); font-style: italic; margin-bottom: 30px;"></p>
             <h2>Список стихотворений</h2>
@@ -33,11 +29,31 @@
 
     <script src="data.js"></script>
     <script>
+        const params = new URLSearchParams(window.location.search);
+        const colId = params.get('colId');
+        const collection = poetryData.collections.find(c => c.id === colId);
+
+        // Функция для установки фона страницы с учетом светлой/темной темы
+        function updatePageBackground(theme) {
+            if (collection && collection.image) {
+                // Подложка поверх картинки, чтобы текст не сливался с фоном
+                const overlay = theme === 'dark' 
+                    ? 'linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92))' 
+                    : 'linear-gradient(rgba(247, 245, 250, 0.85), rgba(247, 245, 250, 0.92))';
+                
+                document.body.style.backgroundImage = `${overlay}, url('${collection.image}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        }
+
         // Темы
         const toggleBtn = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', currentTheme);
         toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        updatePageBackground(currentTheme);
 
         toggleBtn.addEventListener('click', () => {
             let theme = document.documentElement.getAttribute('data-theme');
@@ -45,40 +61,26 @@
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+            updatePageBackground(newTheme);
         });
 
-        // Читаем ID сборника из URL
-        const params = new URLSearchParams(window.location.search);
-        const colId = params.get('colId');
+        // Вывод данных сборника
+        if (collection) {
+            document.title = collection.title;
+            document.getElementById('colTitle').textContent = collection.title;
+            document.getElementById('colDesc').textContent = collection.description || '';
 
-        const collection = poetryData.collections.find(c => c.id === colId);
-
-if (collection) {
-    document.title = collection.title;
-    document.getElementById('colTitle').textContent = collection.title;
-    document.getElementById('colDesc').textContent = collection.description;
-
-    // Выводим картинку-обложку, если она указана в data.js
-    if (collection.image) {
-        const coverWrapper = document.getElementById('colCoverWrapper');
-        const coverImg = document.getElementById('colCoverImg');
-        coverImg.src = collection.image;
-        coverWrapper.style.display = 'block';
-    }
-
-    const listEl = document.getElementById('colPoemsList');
-    collection.poems.forEach(poem => {
-        listEl.innerHTML += `
-            <li>
-                <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
-                    ${poem.title}
-                </a>
-            </li>
-        `;
-    });
-}
-		
-		else {
+            const listEl = document.getElementById('colPoemsList');
+            collection.poems.forEach(poem => {
+                listEl.innerHTML += `
+                    <li>
+                        <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
+                            ${poem.title}
+                        </a>
+                    </li>
+                `;
+            });
+        } else {
             document.getElementById('colTitle').textContent = 'Сборник не найден';
         }
     </script>
