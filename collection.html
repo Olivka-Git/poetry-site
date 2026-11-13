@@ -29,9 +29,44 @@
 
     <script src="data.js"></script>
     <script>
-        const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
         const colId = params.get('colId');
+        
+        // Ищем сборник в базе
         const collection = poetryData.collections.find(c => c.id === colId);
+
+        if (collection) {
+            document.title = collection.title;
+            document.getElementById('colTitle').textContent = collection.title;
+            
+            // Если есть описание — выводим
+            const descEl = document.getElementById('colDesc');
+            if (descEl) {
+                descEl.textContent = collection.description || '';
+            }
+
+            updatePageBackground(currentTheme);
+
+            const listEl = document.getElementById('colPoemsList');
+            if (listEl) {
+                collection.poems.forEach(poem => {
+                    listEl.innerHTML += `
+                        <li>
+                            <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
+                                ${poem.title}
+                            </a>
+                        </li>
+                    `;
+                });
+            }
+        } else {
+            // Если сборник не нашелся, выводим понятную ошибку на экран
+            document.getElementById('colTitle').textContent = 'Сборник не найден';
+            const descEl = document.getElementById('colDesc');
+            if (descEl) {
+                descEl.innerHTML = `<span style="color: #ff6b6b;">В базе данных нет сборника с ID: <b>${colId}</b>.<br>Проверь файл data.js и ссылку с главной страницы.</span>`;
+            }
+        }
 
         // Функция для установки фона страницы с учетом светлой/темной темы
         function updatePageBackground(theme) {
