@@ -18,12 +18,15 @@
             </div>
             <button class="theme-toggle" id="themeToggle">🌙 Ночь</button>
         </header>
-
+		
+		<div id="colCoverWrapper" style="display: none; margin-bottom: 25px;">
+			<img id="colCoverImg" src="" alt="Обложка сборника" style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+		</div>
+		
         <main>
             <p id="colDesc" style="color: var(--muted-color); font-style: italic; margin-bottom: 30px;"></p>
             <h2>Список стихотворений</h2>
             <ul class="poem-list" id="colPoemsList">
-                <!-- Сюда JS выведет стихи сборника -->
             </ul>
         </main>
     </div>
@@ -50,30 +53,32 @@
 
         const collection = poetryData.collections.find(c => c.id === colId);
 
-        if (collection) {
-            document.title = collection.title;
-            document.getElementById('colTitle').textContent = collection.title;
-            document.getElementById('colDesc').textContent = collection.description;
+if (collection) {
+    document.title = collection.title;
+    document.getElementById('colTitle').textContent = collection.title;
+    document.getElementById('colDesc').textContent = collection.description;
 
-            // Если у сборника есть картинка, ставим её на фон или шапку
-            if (collection.image) {
-                document.body.style.backgroundImage = `linear-gradient(rgba(15, 12, 27, 0.8), rgba(15, 12, 27, 0.9)), url('${collection.image}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-                document.body.style.backgroundAttachment = 'fixed';
-            }
+    // Выводим картинку-обложку, если она указана в data.js
+    if (collection.image) {
+        const coverWrapper = document.getElementById('colCoverWrapper');
+        const coverImg = document.getElementById('colCoverImg');
+        coverImg.src = collection.image;
+        coverWrapper.style.display = 'block';
+    }
 
-            const listEl = document.getElementById('colPoemsList');
-            collection.poems.forEach(poem => {
-                listEl.innerHTML += `
-                    <li>
-                        <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
-                            ${poem.title}
-                        </a>
-                    </li>
-                `;
-            });
-        } else {
+    const listEl = document.getElementById('colPoemsList');
+    collection.poems.forEach(poem => {
+        listEl.innerHTML += `
+            <li>
+                <a href="poem.html?type=collection&colId=${collection.id}&poemId=${poem.id}" style="font-size: 1.1rem;">
+                    ${poem.title}
+                </a>
+            </li>
+        `;
+    });
+}
+		
+		else {
             document.getElementById('colTitle').textContent = 'Сборник не найден';
         }
     </script>
