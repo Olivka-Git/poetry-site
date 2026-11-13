@@ -36,17 +36,37 @@
         // Функция для установки фона страницы с учетом светлой/темной темы
         function updatePageBackground(theme) {
             if (collection && collection.image) {
-                // Подложка поверх картинки, чтобы текст не сливался с фоном
-                const overlay = theme === 'dark' 
-                    ? 'linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92))' 
-                    : 'linear-gradient(rgba(247, 245, 250, 0.85), rgba(247, 245, 250, 0.92))';
-                
-                document.body.style.backgroundImage = `${overlay}, url('${collection.image}')`;
+                if (theme === 'dark') {
+                    document.body.style.backgroundImage = `linear-gradient(rgba(13, 9, 20, 0.85), rgba(13, 9, 20, 0.92)), url('${collection.image}')`;
+                } else {
+                    // В светлом режиме делаем глубокую темную подложку, чтобы темная обложка не смотрелась грязно
+                    document.body.style.backgroundImage = `linear-gradient(rgba(20, 15, 30, 0.88), rgba(20, 15, 30, 0.94)), url('${collection.image}')`;
+                    document.documentElement.style.setProperty('--text-color', '#e4e1ed');
+                    document.documentElement.style.setProperty('--muted-color', '#9c95b0');
+                    document.documentElement.style.setProperty('--card-bg', 'rgba(26, 20, 38, 0.75)');
+                    document.documentElement.style.setProperty('--border-color', '#2e2440');
+                }
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundPosition = 'center';
                 document.body.style.backgroundAttachment = 'fixed';
             }
         }
+
+        // Темы
+        const toggleBtn = document.getElementById('themeToggle');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        toggleBtn.textContent = currentTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+        updatePageBackground(currentTheme);
+
+        toggleBtn.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            let newTheme = theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
+            location.reload();
+        });
 
         // Темы
         const toggleBtn = document.getElementById('themeToggle');

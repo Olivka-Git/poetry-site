@@ -20,7 +20,7 @@ const poetryData = {
         {
             id: "Ambivolentost-soul",
             title: "Сборник «Амбивалентность души»",
-			description: "ИЗВИНИТЬСЯ НЕ ХОЧЕШЬ?!",
+			description: "",
 			image: "images/Ambivoletnost.jpg",
             poems: [
                 {
@@ -46,7 +46,6 @@ const poetryData = {
 И холодные темные руки,
 Мне снова потянут на дно...`,
 					explanation: "О тоске и пустоте под маской улыбки, когда поддержка — только ты сам.",
-					bgImage: ""
                 }
             ]
         }
