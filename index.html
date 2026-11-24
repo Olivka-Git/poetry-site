@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поэзия</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Подключаем красивый шрифт с засечками для стихов -->
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -15,7 +14,6 @@
             <div class="author-block">
                 <img src="images/avatar.jpg" alt="Аватар автора" class="author-avatar">
                 <div class="author-info">
-                    <!-- Имя или псевдоним автора -->
                     <h1 class="author-name">TessMonde</h1>
                     <p class="author-bio">Сборник стихотворений и личных заметок</p>
                 </div>
@@ -24,13 +22,11 @@
         </header>
 
         <main id="content">
-            <!-- Сюда JavaScript автоматически выведет содержимое -->
         </main>
     </div>
 
     <script src="data.js"></script>
     <script>
-        // Скрипт темы
         const toggleBtn = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', currentTheme);
@@ -44,30 +40,30 @@
             toggleBtn.textContent = newTheme === 'dark' ? '☀️ День' : '🌙 Ночь';
         });
 
-        // Отрисовка главной страницы
         const contentDiv = document.getElementById('content');
 
         let htmlContent = '<h2 style="margin-bottom: 20px;">Сборники стихов</h2><div class="collections-grid">';
-        
-        // Выводим сборники карточками (с защитой || '' от появления undefined)
+
         poetryData.collections.forEach(col => {
             htmlContent += `
                 <a href="collection.html?colId=${col.id}" class="collection-card" style="background-image: linear-gradient(to top, rgba(15,12,27,0.9), rgba(15,12,27,0.3)), url('${col.image}');">
                     <div class="card-content">
-                        <h3>${col.title}</h3>
-                        <p>${col.description || ''}</p>
+                        <div class="card-main">
+                            <h3>${col.title}</h3>
+                            <p>${col.description || ''}</p>
+                        </div>
+                        ${col.date ? `<span class="card-date">${col.date}</span>` : ''}
                     </div>
                 </a>
             `;
         });
         htmlContent += '</div>';
 
-        // Отдельные стихи
         htmlContent += '<h2 style="margin-top: 40px; margin-bottom: 20px;">Отдельные стихотворения</h2><ul class="poem-list">';
         poetryData.singlePoems.forEach(poem => {
             htmlContent += `
                 <li>
-                    <a href="poem.html?type=single&poemId=${poem.id}">${poem.title}</a> 
+                    <a href="poem.html?type=single&poemId=${poem.id}">${poem.title}</a>
                     <span style="font-size: 0.85rem; color: var(--muted-color); float: right;">${poem.date}</span>
                 </li>
             `;

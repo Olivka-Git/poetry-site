@@ -194,6 +194,14 @@ button.theme-toggle:hover {
     right: 0;
     padding: 20px;
     color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.card-main {
+    min-width: 0;
 }
 
 .card-content h3 {
@@ -209,4 +217,11 @@ button.theme-toggle:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.card-date {
+    font-size: 0.85rem;
+    color: #dcd4e8;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
