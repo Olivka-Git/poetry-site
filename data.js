@@ -785,7 +785,7 @@ const poetryData = {
 			]
 		},
 		{
-			id: "HaotichniyPicture",
+			id: "PepelvSireni",
             title: "Пепел на сирени»",
 			date: "27.11.2026",
 			image: "images/PepelvSireni.jpg",
